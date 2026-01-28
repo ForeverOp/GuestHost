@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Scripts Raws</title>
+<title>Scripts Raws GitHub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body {
@@ -52,11 +52,13 @@ button {
 button:hover {
     opacity: 0.8;
 }
-.link {
-    margin-top: 8px;
-    display: block;
-    color: #00ccff;
-    text-decoration: underline;
+.raw-container {
+    margin-top: 10px;
+    background: #222;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: monospace;
+    white-space: pre-wrap;
 }
 </style>
 </head>
@@ -65,7 +67,6 @@ button:hover {
 <h1>Crie Raws para seus Scripts</h1>
 <div class="container">
 
-<!-- Criar 10 boxes -->
 <script>
 for (let i=1; i<=10; i++) {
     document.write(`
@@ -73,7 +74,7 @@ for (let i=1; i<=10; i++) {
         <h3>Raw ${i}</h3>
         <textarea id="raw${i}" placeholder="Cole seu script Lua aqui..."></textarea>
         <button onclick="gerarRaw(${i})">Gerar Raw</button>
-        <a id="link${i}" class="link" target="_blank" href="#">Link Raw ${i}</a>
+        <div id="rawcontainer${i}" class="raw-container"></div>
     </div>
     `);
 }
@@ -82,15 +83,10 @@ function gerarRaw(n) {
     const script = document.getElementById('raw'+n).value.trim();
     if (!script) { alert("Escreva algum script primeiro!"); return; }
 
-    // Cria link para abrir script em nova aba
-    const blob = new Blob([script], {type: "text/plain"});
-    const url = URL.createObjectURL(blob);
-    const link = document.getElementById('link'+n);
-    link.href = url;
-    link.textContent = `Abrir Raw ${n}`;
-    link.target = "_blank";
+    const container = document.getElementById('rawcontainer'+n);
+    container.textContent = `--- Salve este arquivo no GitHub → raw/${n}.lua ---\n\n` + script;
 
-    alert("Link criado! Lembre-se de salvar este script no GitHub (ex: raw/"+n+".lua) para usar no Roblox.");
+    alert(`Raw ${n} pronto! Copie o conteúdo e crie o arquivo raw/${n}.lua no seu repositório GitHub.`);
 }
 </script>
 
