@@ -19,14 +19,14 @@ button:hover { opacity:0.8; }
 <h1>GuestHost Raw Creator</h1>
 <div class="container">
 
-<textarea id="scriptInput" placeholder="Escreva seu script aqui..."></textarea>
+<textarea id="scriptInput" placeholder="Escreva seu script Lua aqui..."></textarea>
 <br>
 <button onclick="criarRaw()">Criar Raw</button>
 <div id="rawcontainer" class="raw-container"></div>
 
 <script>
-const owner = "XLuckszX";  // seu usuário GitHub
-const repo = "xluckszxOxy"; // seu repositório
+const owner = "XLuckszX";      // seu usuário GitHub
+const repo = "xluckszxOxy";    // seu repositório
 const branch = "main"; 
 const token = "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"; // seu token
 
@@ -34,7 +34,7 @@ async function criarRaw() {
     const script = document.getElementById('scriptInput').value.trim();
     if(!script) { alert("Escreva algum script primeiro!"); return; }
 
-    // Pegar o próximo número disponível
+    // Pega arquivos existentes para calcular próximo número
     let nextNumber = 1;
     try {
         const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/raw`, {
@@ -42,14 +42,14 @@ async function criarRaw() {
         });
         if(res.ok) {
             const data = await res.json();
-            const numbers = data.map(file => parseInt(file.name.replace(".lua",""))).filter(n=>!isNaN(n));
+            const numbers = data.map(file => parseInt(file.name)).filter(n=>!isNaN(n));
             if(numbers.length>0) nextNumber = Math.max(...numbers)+1;
         }
     } catch(err){ console.log(err); }
 
     const rawPath = `raw/${nextNumber}`;
 
-    // Cria o arquivo raw puro
+    // Cria arquivo raw puro
     const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${rawPath}`, {
         method: "PUT",
         headers: { "Authorization": `token ${token}`, "Content-Type":"application/json" },
@@ -61,11 +61,13 @@ async function criarRaw() {
     });
 
     if(putRes.ok) {
+        // Link válido para loadstring
         const link = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/raw/${nextNumber}`;
         document.getElementById('rawcontainer').innerHTML = `✅ Raw criado!<br><a href="${link}" target="_blank">${link}</a>`;
         document.getElementById('scriptInput').value = "";
     } else {
-        document.getElementById('rawcontainer').innerHTML = "❌ Erro ao criar o raw. Verifique o token e repositório.";
+        document.getElementById('rawcontainer').innerHTML = "❌ Erro ao criar o raw. Verifique token e repo.";
+        console.log(await putRes.json());
     }
 }
 </script>
