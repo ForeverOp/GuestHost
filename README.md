@@ -1,38 +1,37 @@
-<!-- ===============================
-     README COM QUADRADO + BOTÃO
-     =============================== -->
-
 <div align="center">
+
+<h1>📜 Scripts Raws</h1>
 
 <!-- QUADRADO -->
 <div style="
 width: 90%;
 max-width: 800px;
-border: 2px solid black;
+border: 2px solid #000;
 border-radius: 14px;
-padding: 40px;
-font-size: 28px;
+padding: 30px;
+font-size: 20px;
 font-weight: 500;
-margin-top: 40px;
+margin-top: 30px;
 ">
 
-escrever script
+Repositório de scripts RAW  
+Pronto para uso com **loadstring** no Roblox.
 
 </div>
 
 <br>
 
-<!-- BOTÃO EXECUTAR RAW -->
-<a href="https://xluckszx.github.io/raw/1.lua" target="_blank">
+<!-- BOTÃO RAW -->
+<a href="https://xluckszx.github.io/xluckszxOxy/raw/1.lua" target="_blank">
   <button style="
     padding: 10px 22px;
     font-size: 16px;
     border-radius: 8px;
-    border: 1.5px solid black;
-    background: white;
+    border: 1.5px solid #000;
+    background: #ffffff;
     cursor: pointer;
   ">
-    Executar raw
+    Abrir RAW
   </button>
 </a>
 
@@ -40,17 +39,16 @@ escrever script
 
 ---
 
-## ⚙️ Funções
+## ⚙️ Funcionalidades
 
-- 📄 Abrir script em **RAW**
-- 🔁 Loadstring automático
-- ♾️ Sistema de páginas RAW infinitas (1.lua, 2.lua, 3.lua…)
-- 📦 Organização por ordem de uso
-- 🚀 Compatível com **executores Roblox**
+- 📄 Scripts hospedados em **RAW**
+- 🔗 Compatível com **GitHub Pages**
+- 🎮 Uso direto em **Roblox**
+- ♾️ Estrutura simples e organizada
 
 ---
 
-## 📜 Loadstring
+## 📜 Loadstring (exemplo)
 
 ```lua
-loadstring(game:HttpGet("https://xluckszx.github.io/raw/1.lua"))()
+loadstring(game:HttpGet("https://xluckszx.github.io/xluckszxOxy/raw/1.lua"))()
