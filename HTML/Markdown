@@ -1,0 +1,24 @@
+# 🌸 Meu Projeto / Script 🌸
+
+Descrição curta do projeto aqui.
+
+---
+
+## 📌 Sobre
+Este projeto foi criado para:
+- ✔️ Exemplo 1
+- ✔️ Exemplo 2
+- ✔️ Exemplo 3
+
+---
+
+## ⚙️ Como usar
+1. Copie o código
+2. Cole onde quiser
+3. Execute
+
+---
+
+## 📜 Script
+```lua
+print("Hello World")
