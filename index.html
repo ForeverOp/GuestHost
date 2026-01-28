@@ -2,55 +2,86 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Visualizador de Scripts</title>
+<title>Raw Script Hub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body { background:#0f0f0f; color:#eaeaea; font-family: Arial, sans-serif; margin:0; padding:20px; }
 h1 { text-align:center; color:#ff4d4d; }
 .container { max-width:900px; margin:auto; }
-pre { background:#111; padding:20px; border-radius:12px; overflow-x:auto; white-space: pre-wrap; font-family: monospace; font-size:14px; }
-.link-container { margin-top:20px; text-align:center; }
-a { color:#00ffcc; text-decoration:none; }
-a:hover { text-decoration:underline; }
+textarea { width:100%; height:120px; background:#1c1c1c; color:#00ffcc; border:1px solid #555; border-radius:8px; font-family: monospace; font-size:14px; padding:10px; resize:vertical; }
+button { margin-top:10px; padding:10px 18px; font-size:14px; border-radius:6px; border:1.5px solid #fff; background:#ff4d4d; color:#fff; cursor:pointer; }
+button:hover { opacity:0.8; }
+.raw-container { margin-top:10px; background:#222; padding:10px; border-radius:8px; font-family: monospace; white-space: pre-wrap; }
 </style>
 </head>
 <body>
 
-<h1>Visualizador de Script</h1>
+<h1>Raw Script Hub</h1>
 <div class="container">
-<pre id="scriptContent">Carregando script...</pre>
 
-<div class="link-container" id="linkContainer"></div>
-</div>
+<textarea id="scriptInput" placeholder="Escreva seu script Lua aqui..."></textarea>
+<br>
+<button onclick="criarRaw()">Criar Raw</button>
+<div id="rawcontainer" class="raw-container"></div>
 
 <script>
-const owner = "XLuckszX";
-const repo = "xluckszxOxy";
-const branch = "main";
+const owner = "XLuckszX";  // seu usuário
+const repo = "xluckszxOxy"; // seu repositório
+const branch = "main"; 
+const token = "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";
 
-// Pega o id do script da URL
-const params = new URLSearchParams(window.location.search);
-const id = params.get('id') || "1"; // padrão 1 se não passar id
+async function criarRaw() {
+    const script = document.getElementById('scriptInput').value.trim();
+    if(!script) { alert("Escreva algum script primeiro!"); return; }
 
-// Monta o link raw no GitHub
-const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/raw/${id}.lua`;
+    // Primeiro, pegar o último número usado
+    let nextNumber = 1;
+    try {
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/raw`, { headers: { Authorization: `token ${token}` } });
+        if(res.ok) {
+            const data = await res.json();
+            const numbers = data.map(file => parseInt(file.name.replace(".lua",""))).filter(n=>!isNaN(n));
+            if(numbers.length>0) nextNumber = Math.max(...numbers)+1;
+        }
+    } catch(err){ console.log(err); }
 
-// Pega o conteúdo do script e mostra na página
-fetch(rawUrl)
-.then(res => {
-    if (!res.ok) throw new Error("Script não encontrado!");
-    return res.text();
-})
-.then(text => {
-    document.getElementById('scriptContent').textContent = text;
-    const linkContainer = document.getElementById('linkContainer');
-    linkContainer.innerHTML = `<p>Link permanente para este script:</p>
-    <a href="?id=${id}">${window.location.origin + window.location.pathname}?id=${id}</a>`;
-})
-.catch(err => {
-    document.getElementById('scriptContent').textContent = "❌ Script não encontrado!";
-});
+    const rawPath = `raw/${nextNumber}.lua`;
+    const htmlPath = `${nextNumber}.html`;
+
+    // Cria o arquivo .lua
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${rawPath}`, {
+        method: "PUT",
+        headers: { "Authorization": `token ${token}`, "Content-Type":"application/json" },
+        body: JSON.stringify({ message: `Criando ${rawPath}`, content: btoa(unescape(encodeURIComponent(script))), branch })
+    });
+
+    // Cria a página HTML que abre o script
+    const pageHTML = `
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Raw ${nextNumber}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>body{background:#0f0f0f;color:#eaeaea;font-family:Arial,sans-serif;margin:0;padding:20px}pre{background:#111;padding:20px;border-radius:12px;white-space:pre-wrap;font-family:monospace}</style>
+</head>
+<body>
+<h1>Raw ${nextNumber}</h1>
+<pre>${script.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</pre>
+</body>
+</html>
+    `;
+
+    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${htmlPath}`, {
+        method: "PUT",
+        headers: { "Authorization": `token ${token}`, "Content-Type":"application/json" },
+        body: JSON.stringify({ message: `Criando ${htmlPath}`, content: btoa(unescape(encodeURIComponent(pageHTML))), branch })
+    });
+
+    document.getElementById('rawcontainer').textContent = `✅ Raw criado! Link: https://XLuckszX.github.io/xluckszxOxy/${nextNumber}.html`;
+}
 </script>
 
+</div>
 </body>
 </html>
