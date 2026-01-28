@@ -52,13 +52,15 @@ button {
 button:hover {
     opacity: 0.8;
 }
-.raw-container {
+.raw-link {
     margin-top: 10px;
+    display: block;
     background: #222;
-    padding: 10px;
+    padding: 8px;
     border-radius: 8px;
     font-family: monospace;
-    white-space: pre-wrap;
+    color: #0ff;
+    text-decoration: none;
 }
 </style>
 </head>
@@ -68,6 +70,7 @@ button:hover {
 <div class="container">
 
 <script>
+const repoURL = "https://raw.githubusercontent.com/XLuckszX/xluckszxOxy/main/raw/";
 const exemplos = [
 `print("Hello World from 1.lua!")`,
 `local StarterGui = game:GetService("StarterGui")
@@ -120,7 +123,7 @@ for (let i=0; i<10; i++) {
         <h3>Raw ${i+1}</h3>
         <textarea id="raw${i+1}">${exemplos[i]}</textarea>
         <button onclick="gerarRaw(${i+1})">Gerar Raw</button>
-        <div id="rawcontainer${i+1}" class="raw-container"></div>
+        <a id="rawlink${i+1}" class="raw-link" href="#" target="_blank" style="display:none;"></a>
     </div>
     `);
 }
@@ -129,10 +132,12 @@ function gerarRaw(n) {
     const script = document.getElementById('raw'+n).value.trim();
     if (!script) { alert("Escreva algum script primeiro!"); return; }
 
-    const container = document.getElementById('rawcontainer'+n);
-    container.textContent = `--- Copie e salve como raw/${n}.lua no GitHub ---\n\n` + script;
+    const link = document.getElementById('rawlink'+n);
+    link.href = repoURL + n + ".lua";
+    link.textContent = "Abrir Raw " + n + " no GitHub";
+    link.style.display = "block";
 
-    alert(`Raw ${n} pronto! Copie o conteúdo e crie o arquivo raw/${n}.lua no seu repositório GitHub.`);
+    alert(`Raw ${n} pronto! Clique no link abaixo para abrir no GitHub.`);
 }
 </script>
 
