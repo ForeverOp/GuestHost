@@ -1,0 +1,17 @@
+name: "GuestHost"
+platform: "onnxruntime_onnx"  # backend pronto
+max_batch_size: 8
+input [
+{
+name: "input_0"
+data_type: TYPE_FP32
+dims: [3, 224, 224]
+}
+]
+output [
+{
+name: "output_0"
+data_type: TYPE_FP32
+dims: [1000]
+}
+]
