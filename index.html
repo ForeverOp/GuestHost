@@ -2,54 +2,38 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Scripts Raws</title>
+<title>Raw Script Hub</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-    background: #0f0f0f;
-    color: #eaeaea;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-}
+body { background: #0f0f0f; color: #eaeaea; font-family: Arial, sans-serif; text-align: center; padding: 20px; }
 h1 { color: #ff4d4d; }
-button {
-    margin: 10px;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    background: #ff4d4d;
-    color: #fff;
-}
+textarea { width: 80%; height: 200px; margin-top: 20px; padding: 10px; background: #111; color: #0f0; border: 2px solid #fff; border-radius: 8px; font-family: monospace; font-size: 14px; }
+button { margin-top: 20px; padding: 10px 20px; font-size: 16px; border-radius: 6px; border: none; cursor: pointer; background: #ff4d4d; color: #fff; }
 button:hover { opacity: 0.8; }
 </style>
 </head>
 <body>
 
-<h1>Scripts Raws</h1>
+<h1>Crie Raws para seu Script</h1>
 
-<p>Clique em um botão para abrir o raw do script:</p>
-
-<div id="buttons"></div>
+<textarea id="scriptBox" placeholder="Cole ou escreva seu script aqui..."></textarea><br>
+<button id="rawBtn">Executar raw</button>
 
 <script>
-const totalScripts = 10; // Quantos raws você tem
-const baseUrl = "https://SEU_SITE.vercel.app/api/raw?id="; // Troque pela sua URL do Vercel
+document.getElementById("rawBtn").onclick = function() {
+    const code = document.getElementById("scriptBox").value;
+    if(!code) return alert("Digite algum script!");
 
-const container = document.getElementById("buttons");
+    // Cria uma "página lua" virtual
+    const blob = new Blob([code], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
 
-for (let i = 1; i <= totalScripts; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = "Executar Raw " + i;
-    btn.onclick = () => {
-        window.open(baseUrl + i, "_blank");
-        console.log("Loadstring para Roblox:");
-        console.log(`loadstring(game:HttpGet("${baseUrl}${i}"))()`);
-    };
-    container.appendChild(btn);
-}
+    // Abre em nova aba (simula raw)
+    window.open(url, "_blank");
+
+    // Mostra no console o loadstring
+    console.log(`loadstring(game:HttpGet("${url}"))()`);
+};
 </script>
 
 </body>
