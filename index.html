@@ -2,13 +2,38 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Raw Script Hub</title>
+<title>Scripts Raws</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { background: #0f0f0f; color: #eaeaea; font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-h1 { color: #ff4d4d; }
-textarea { width: 80%; height: 200px; margin-top: 20px; padding: 10px; background: #111; color: #0f0; border: 2px solid #fff; border-radius: 8px; font-family: monospace; font-size: 14px; }
-button { margin-top: 20px; padding: 10px 20px; font-size: 16px; border-radius: 6px; border: none; cursor: pointer; background: #ff4d4d; color: #fff; }
+body {
+    background: #0f0f0f;
+    color: #eaeaea;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+h1 { color: #ff4d4d; margin-bottom: 30px; }
+textarea {
+    width: 80%;
+    height: 250px;
+    background: #111;
+    color: #0f0;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 14px;
+    padding: 10px;
+}
+button {
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #ff4d4d;
+    color: #fff;
+}
 button:hover { opacity: 0.8; }
 </style>
 </head>
@@ -22,16 +47,19 @@ button:hover { opacity: 0.8; }
 <script>
 document.getElementById("rawBtn").onclick = function() {
     const code = document.getElementById("scriptBox").value;
-    if(!code) return alert("Digite algum script!");
+    if (!code) {
+        alert("Digite algum script!");
+        return;
+    }
 
-    // Cria uma "página lua" virtual
+    // Cria um arquivo lua virtual no navegador
     const blob = new Blob([code], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
-    // Abre em nova aba (simula raw)
+    // Abre a página .lua com o script
     window.open(url, "_blank");
 
-    // Mostra no console o loadstring
+    // Exibe no console como loadstring
     console.log(`loadstring(game:HttpGet("${url}"))()`);
 };
 </script>
