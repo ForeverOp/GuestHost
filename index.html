@@ -9,60 +9,91 @@ body {
     background: #0f0f0f;
     color: #eaeaea;
     font-family: Arial, sans-serif;
-    text-align: center;
+    margin: 0;
     padding: 20px;
 }
-h1 { color: #ff4d4d; margin-bottom: 30px; }
-textarea {
-    width: 80%;
-    height: 250px;
+h1 {
+    text-align: center;
+    color: #ff4d4d;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+.box {
     background: #111;
-    color: #0f0;
     border: 2px solid #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+}
+textarea {
+    width: 100%;
+    height: 150px;
+    background: #1c1c1c;
+    color: #00ffcc;
+    border: 1px solid #555;
     border-radius: 8px;
     font-family: monospace;
     font-size: 14px;
     padding: 10px;
+    resize: vertical;
 }
 button {
-    margin-top: 20px;
-    padding: 10px 25px;
-    font-size: 16px;
+    margin-top: 10px;
+    padding: 10px 18px;
+    font-size: 14px;
     border-radius: 6px;
-    border: none;
-    cursor: pointer;
+    border: 1.5px solid #fff;
     background: #ff4d4d;
     color: #fff;
+    cursor: pointer;
 }
-button:hover { opacity: 0.8; }
+button:hover {
+    opacity: 0.8;
+}
+.link {
+    margin-top: 8px;
+    display: block;
+    color: #00ccff;
+    text-decoration: underline;
+}
 </style>
 </head>
 <body>
 
-<h1>Crie Raws para seu Script</h1>
+<h1>Crie Raws para seus Scripts</h1>
+<div class="container">
 
-<textarea id="scriptBox" placeholder="Cole ou escreva seu script aqui..."></textarea><br>
-<button id="rawBtn">Executar raw</button>
-
+<!-- Criar 10 boxes -->
 <script>
-document.getElementById("rawBtn").onclick = function() {
-    const code = document.getElementById("scriptBox").value;
-    if (!code) {
-        alert("Digite algum script!");
-        return;
-    }
+for (let i=1; i<=10; i++) {
+    document.write(`
+    <div class="box">
+        <h3>Raw ${i}</h3>
+        <textarea id="raw${i}" placeholder="Cole seu script Lua aqui..."></textarea>
+        <button onclick="gerarRaw(${i})">Gerar Raw</button>
+        <a id="link${i}" class="link" target="_blank" href="#">Link Raw ${i}</a>
+    </div>
+    `);
+}
 
-    // Cria um arquivo lua virtual no navegador
-    const blob = new Blob([code], { type: "text/plain" });
+function gerarRaw(n) {
+    const script = document.getElementById('raw'+n).value.trim();
+    if (!script) { alert("Escreva algum script primeiro!"); return; }
+
+    // Cria link para abrir script em nova aba
+    const blob = new Blob([script], {type: "text/plain"});
     const url = URL.createObjectURL(blob);
+    const link = document.getElementById('link'+n);
+    link.href = url;
+    link.textContent = `Abrir Raw ${n}`;
+    link.target = "_blank";
 
-    // Abre a página .lua com o script
-    window.open(url, "_blank");
-
-    // Exibe no console como loadstring
-    console.log(`loadstring(game:HttpGet("${url}"))()`);
-};
+    alert("Link criado! Lembre-se de salvar este script no GitHub (ex: raw/"+n+".lua) para usar no Roblox.");
+}
 </script>
 
+</div>
 </body>
 </html>
