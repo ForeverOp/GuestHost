@@ -4,28 +4,53 @@
   <meta charset="UTF-8">
   <title>GuestHost Interface</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    button { padding: 10px 20px; margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+    }
+    button {
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      background: #fff;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
   <h1>GuestHost Interface</h1>
+  
   <input type="file" id="fileInput">
-  <button id="sendBtn">Send to Backend</button>
+  <button id="processBtn">Process File</button>
+
+  <div id="output">
+    <p>No file processed yet.</p>
+  </div>
 
   <script>
-    const sendBtn = document.getElementById("sendBtn");
-    const fileInput = document.getElementById("fileInput");
+    const fileInput = document.getElementById('fileInput');
+    const processBtn = document.getElementById('processBtn');
+    const output = document.getElementById('output');
 
-    sendBtn.addEventListener("click", () => {
+    processBtn.addEventListener('click', () => {
       const file = fileInput.files[0];
       if (!file) {
-        alert("Select a file first");
+        output.innerHTML = "<p>Please select a file first.</p>";
         return;
       }
 
-      // Aqui você chamaria o backend via fetch/AJAX
-      console.log("File ready to send:", file.name);
+      // Aqui só mostramos o nome do arquivo, sem backend
+      output.innerHTML = `<p>File ready to process: <strong>${file.name}</strong></p>`;
     });
   </script>
 </body>
