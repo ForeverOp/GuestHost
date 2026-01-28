@@ -1,66 +1,32 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Gerador de Raws Lua</title>
-<style>
-body { background:#0f0f0f; color:#eaeaea; font-family:monospace; padding:20px; }
-textarea { width:100%; height:150px; background:#1c1c1c; color:#00ffcc; border-radius:8px; padding:10px; font-family:monospace; }
-button { margin-top:10px; padding:10px 15px; background:#ff4d4d; color:white; border:none; border-radius:6px; cursor:pointer; }
-#rawlink { margin-top:15px; display:block; color:#0f0; word-break: break-all; }
-h1 { text-align:center; color:#ff4d4d; }
-.container { max-width:800px; margin:auto; }
-#status { margin-top:10px; color:#ff4d4d; font-weight:bold; }
-</style>
+  <meta charset="UTF-8">
+  <title>GuestHost Interface</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { padding: 10px 20px; margin-top: 10px; }
+  </style>
 </head>
 <body>
+  <h1>GuestHost Interface</h1>
+  <input type="file" id="fileInput">
+  <button id="sendBtn">Send to Backend</button>
 
-<div class="container">
-<h1>Gerador de Raws Lua</h1>
+  <script>
+    const sendBtn = document.getElementById("sendBtn");
+    const fileInput = document.getElementById("fileInput");
 
-<textarea id="scriptInput" placeholder="Escreva seu script Lua aqui..."></textarea>
-<button onclick="criarRaw()">Criar Raw</button>
-<a id="rawlink" target="_blank"></a>
-<div id="status"></div>
-</div>
+    sendBtn.addEventListener("click", () => {
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("Select a file first");
+        return;
+      }
 
-<script>
-// === URL do seu backend Node.js no Vercel ===
-const BACKEND_URL = "https://seuprojeto.vercel.app/api/create";
-
-async function criarRaw() {
-    const script = document.getElementById('scriptInput').value.trim();
-    if(!script) return alert("Escreva algum script!");
-
-    const status = document.getElementById('status');
-    const linkEl = document.getElementById('rawlink');
-    status.textContent = "⏳ Criando raw...";
-    linkEl.textContent = "";
-    linkEl.href = "";
-
-    try {
-        const res = await fetch(BACKEND_URL, {
-            method:"POST",
-            headers:{ "Content-Type":"application/json" },
-            body: JSON.stringify({ script })
-        });
-
-        const data = await res.json();
-        if(res.ok){
-            linkEl.textContent = `✅ Raw criado: ${data.link}`;
-            linkEl.href = data.link;
-            status.textContent = "";
-        } else {
-            status.textContent = "❌ Erro ao criar raw";
-            alert("Erro: " + JSON.stringify(data));
-        }
-    } catch(e){
-        status.textContent = "❌ Erro de conexão com backend";
-        console.error(e);
-        alert("Erro de conexão com backend. Certifique-se que o backend está online.");
-    }
-}
-</script>
-
+      // Aqui você chamaria o backend via fetch/AJAX
+      console.log("File ready to send:", file.name);
+    });
+  </script>
 </body>
 </html>
