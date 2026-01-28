@@ -5,26 +5,50 @@
 <title>Scripts Raws</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { font-family: Arial; background: #0f0f0f; color: #eaeaea; display:flex; flex-direction:column; align-items:center; padding:20px; }
-h1 { color:#ff4d4d; margin-bottom:30px; }
-.button { margin:10px; padding:10px 20px; background:#ff4d4d; color:#fff; border:none; border-radius:6px; cursor:pointer; }
-.button:hover { opacity:0.8; }
+body {
+    background: #0f0f0f;
+    color: #eaeaea;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+h1 { color: #ff4d4d; }
+button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background: #ff4d4d;
+    color: #fff;
+}
+button:hover { opacity: 0.8; }
 </style>
 </head>
 <body>
 
 <h1>Scripts Raws</h1>
 
-<button class="button" onclick="openRaw(1)">Abrir Script 1</button>
-<button class="button" onclick="openRaw(2)">Abrir Script 2</button>
-<button class="button" onclick="openRaw(3)">Abrir Script 3</button>
-<button class="button" onclick="openRaw(4)">Abrir Script 4</button>
-<button class="button" onclick="openRaw(5)">Abrir Script 5</button>
+<p>Clique em um botão para abrir o raw do script:</p>
+
+<div id="buttons"></div>
 
 <script>
-function openRaw(id) {
-  const url = `/api/raw?id=${id}`;
-  window.open(url, "_blank");
+const totalScripts = 10; // Quantos raws você tem
+const baseUrl = "https://SEU_SITE.vercel.app/api/raw?id="; // Troque pela sua URL do Vercel
+
+const container = document.getElementById("buttons");
+
+for (let i = 1; i <= totalScripts; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = "Executar Raw " + i;
+    btn.onclick = () => {
+        window.open(baseUrl + i, "_blank");
+        console.log("Loadstring para Roblox:");
+        console.log(`loadstring(game:HttpGet("${baseUrl}${i}"))()`);
+    };
+    container.appendChild(btn);
 }
 </script>
 
