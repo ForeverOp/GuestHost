@@ -1,24 +1,46 @@
-<textarea id="scriptInput" placeholder="Escreva seu script Lua"></textarea>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Gerador de Raws</title>
+<style>
+body { background:#0f0f0f; color:#eaeaea; font-family:monospace; padding:20px; }
+textarea { width:100%; height:150px; background:#1c1c1c; color:#00ffcc; border-radius:8px; padding:10px; font-family:monospace; }
+button { margin-top:10px; padding:10px 15px; background:#ff4d4d; color:white; border:none; border-radius:6px; cursor:pointer; }
+#rawlink { margin-top:15px; display:block; color:#0f0; }
+</style>
+</head>
+<body>
+
+<h1>Gerador de Raws GitHub</h1>
+<textarea id="scriptInput" placeholder="Escreva seu script Lua aqui..."></textarea>
 <button onclick="criarRaw()">Criar Raw</button>
-<div id="rawcontainer"></div>
+<a id="rawlink" target="_blank"></a>
 
 <script>
 async function criarRaw() {
     const script = document.getElementById('scriptInput').value.trim();
     if(!script) return alert("Escreva algum script!");
 
-    const res = await fetch("/api/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script })
-    });
-
-    const data = await res.json();
-    if(res.ok){
-        document.getElementById('rawcontainer').innerHTML = `
-        ✅ Raw criado! Link: <a href="${data.link}" target="_blank">${data.link}</a>`;
-    } else {
-        alert("Erro: " + JSON.stringify(data));
+    try {
+        const res = await fetch("/api/create", {
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body: JSON.stringify({ script })
+        });
+        const data = await res.json();
+        if(res.ok){
+            document.getElementById('rawlink').textContent = `✅ Raw criado: ${data.link}`;
+            document.getElementById('rawlink').href = data.link;
+        } else {
+            alert("Erro: " + JSON.stringify(data));
+        }
+    } catch(e) {
+        alert("Erro de conexão com o backend");
+        console.error(e);
     }
 }
 </script>
+
+</body>
+</html>
