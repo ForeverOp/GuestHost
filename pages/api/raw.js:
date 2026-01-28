@@ -1,40 +1,45 @@
 import fetch from "node-fetch";
-const OWNER = "GuestHost";
-const REPO  = "GuestHost";
-const BRANCH = "main";
+
+const OWNER = "GuestHost";  // Seu usuário GitHub
+const REPO  = "GuestHost";  // Seu repositório
+const BRANCH = "main";      // Branch do repo
 const TOKEN = "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";
 
 export default async function handler(req, res){
-if(req.method !== "POST") return res.status(405).send("Method not allowed");
+    if(req.method !== "POST") return res.status(405).send("Método não permitido");
 
-const { script } = req.body;  
-if(!script) return res.status(400).send("Nenhum script enviado");  
+    const { script } = req.body;
+    if(!script) return res.status(400).send("Nenhum script enviado");
 
-// Pegar próximo número para raw  
-const listRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/raw`, {  
-    headers: { Authorization: `token ${TOKEN}` }  
-});  
-const files = listRes.ok ? await listRes.json() : [];  
-const numbers = files.map(f => parseInt(f.name)).filter(n=>!isNaN(n));  
-const nextNumber = numbers.length > 0 ? Math.max(...numbers)+1 : 1;  
+    try {
+        // Pegar lista de arquivos na pasta raw
+        const listRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/raw`, {
+            headers: { Authorization: `token ${TOKEN}` }
+        });
+        const files = listRes.ok ? await listRes.json() : [];
+        const numbers = files.map(f=>parseInt(f.name)).filter(n=>!isNaN(n));
+        const nextNumber = numbers.length > 0 ? Math.max(...numbers)+1 : 1;
 
-// Criar arquivo raw  
-const putRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/raw/${nextNumber}`, {  
-    method: "PUT",  
-    headers: { "Authorization": `token ${TOKEN}`, "Content-Type":"application/json" },  
-    body: JSON.stringify({  
-        message: `Criando raw/${nextNumber}`,  
-        content: Buffer.from(script).toString('base64'),  
-        branch: BRANCH  
-    })  
-});  
+        // Criar arquivo raw
+        const putRes = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/raw/${nextNumber}`, {
+            method:"PUT",
+            headers:{ "Authorization":`token ${TOKEN}`, "Content-Type":"application/json" },
+            body: JSON.stringify({
+                message:`Criando raw/${nextNumber}`,
+                content: Buffer.from(script).toString("base64"),
+                branch: BRANCH
+            })
+        });
 
-if(!putRes.ok){  
-    const err = await putRes.json();  
-    return res.status(putRes.status).json(err);  
-}  
+        if(!putRes.ok){
+            const err = await putRes.json();
+            return res.status(putRes.status).json(err);
+        }
 
-const link = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/raw/${nextNumber}`;  
-res.status(200).json({ link });
-
+        const link = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/raw/${nextNumber}`;
+        res.status(200).json({ link });
+    } catch(e){
+        console.error(e);
+        res.status(500).send("Erro interno no servidor");
+    }
 }
