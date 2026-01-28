@@ -68,13 +68,59 @@ button:hover {
 <div class="container">
 
 <script>
-for (let i=1; i<=10; i++) {
+const exemplos = [
+`print("Hello World from 1.lua!")`,
+`local StarterGui = game:GetService("StarterGui")
+StarterGui:SetCore("SendNotification", {Title = "Script 2.lua", Text = "Notificação enviada!", Duration = 3})`,
+`local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local gui = Instance.new("ScreenGui", LP.PlayerGui)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 200, 0, 100)
+frame.Position = UDim2.new(0.5, -100, 0.5, -50)
+frame.BackgroundColor3 = Color3.fromRGB(0, 170, 255)`,
+`local Lighting = game:GetService("Lighting")
+Lighting.Ambient = Color3.fromRGB(255,0,0)
+print("Tela vermelha ativada!")`,
+`local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+LP.Character.HumanoidRootPart.CFrame = CFrame.new(0,50,0)
+print("Teleport executado!")`,
+`for i=1,5 do
+    print("Executando loop "..i)
+    wait(0.5)
+end`,
+`local LP = game:GetService("Players").LocalPlayer
+LP.Character.Humanoid.WalkSpeed = 50
+print("Velocidade alterada para 50!")`,
+`local part = Instance.new("Part", workspace)
+part.Size = Vector3.new(5,5,5)
+part.Position = Vector3.new(0,10,0)
+part.BrickColor = BrickColor.new("Bright green")
+print("Part criada no Workspace!")`,
+`local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+local gui = Instance.new("ScreenGui", LP.PlayerGui)
+local label = Instance.new("TextLabel", gui)
+label.Size = UDim2.new(0,200,0,50)
+label.Position = UDim2.new(0.5,-100,0,50)
+label.Text = "Contador: 0"
+for i=1,10 do
+    label.Text = "Contador: "..i
+    wait(0.5)
+end`,
+`local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+print("Simulando Fling UI no script 10.lua")`
+];
+
+for (let i=0; i<10; i++) {
     document.write(`
     <div class="box">
-        <h3>Raw ${i}</h3>
-        <textarea id="raw${i}" placeholder="Cole seu script Lua aqui..."></textarea>
-        <button onclick="gerarRaw(${i})">Gerar Raw</button>
-        <div id="rawcontainer${i}" class="raw-container"></div>
+        <h3>Raw ${i+1}</h3>
+        <textarea id="raw${i+1}">${exemplos[i]}</textarea>
+        <button onclick="gerarRaw(${i+1})">Gerar Raw</button>
+        <div id="rawcontainer${i+1}" class="raw-container"></div>
     </div>
     `);
 }
@@ -84,7 +130,7 @@ function gerarRaw(n) {
     if (!script) { alert("Escreva algum script primeiro!"); return; }
 
     const container = document.getElementById('rawcontainer'+n);
-    container.textContent = `--- Salve este arquivo no GitHub → raw/${n}.lua ---\n\n` + script;
+    container.textContent = `--- Copie e salve como raw/${n}.lua no GitHub ---\n\n` + script;
 
     alert(`Raw ${n} pronto! Copie o conteúdo e crie o arquivo raw/${n}.lua no seu repositório GitHub.`);
 }
