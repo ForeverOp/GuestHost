@@ -2,75 +2,29 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Scripts Raws GitHub</title>
+<title>Raw Script Hub GitHub API</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body {
-    background: #0f0f0f;
-    color: #eaeaea;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-}
-h1 {
-    text-align: center;
-    color: #ff4d4d;
-}
-.container {
-    max-width: 900px;
-    margin: auto;
-}
-.box {
-    background: #111;
-    border: 2px solid #fff;
-    border-radius: 12px;
-    padding: 20px;
-    margin-top: 25px;
-}
-textarea {
-    width: 100%;
-    height: 150px;
-    background: #1c1c1c;
-    color: #00ffcc;
-    border: 1px solid #555;
-    border-radius: 8px;
-    font-family: monospace;
-    font-size: 14px;
-    padding: 10px;
-    resize: vertical;
-}
-button {
-    margin-top: 10px;
-    padding: 10px 18px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1.5px solid #fff;
-    background: #ff4d4d;
-    color: #fff;
-    cursor: pointer;
-}
-button:hover {
-    opacity: 0.8;
-}
-.raw-container {
-    margin-top: 10px;
-    background: #222;
-    padding: 10px;
-    border-radius: 8px;
-    font-family: monospace;
-    white-space: pre-wrap;
-}
+body { background:#0f0f0f; color:#eaeaea; font-family: Arial, sans-serif; margin:0; padding:20px; }
+h1 { text-align:center; color:#ff4d4d; }
+.container { max-width:900px; margin:auto; }
+.box { background:#111; border:2px solid #fff; border-radius:12px; padding:20px; margin-top:25px; }
+textarea { width:100%; height:120px; background:#1c1c1c; color:#00ffcc; border:1px solid #555; border-radius:8px; font-family: monospace; font-size:14px; padding:10px; resize:vertical; }
+button { margin-top:10px; padding:10px 18px; font-size:14px; border-radius:6px; border:1.5px solid #fff; background:#ff4d4d; color:#fff; cursor:pointer; }
+button:hover { opacity:0.8; }
+.raw-container { margin-top:10px; background:#222; padding:10px; border-radius:8px; font-family: monospace; white-space: pre-wrap; }
 </style>
 </head>
 <body>
 
-<h1>Crie Raws para seus Scripts</h1>
+<h1>Crie e Envie Raws para GitHub</h1>
 <div class="container">
 
 <script>
-const owner = "XLuckszX"; // seu usuário GitHub
+const owner = "XLuckszX"; // seu usuário
 const repo = "xluckszxOxy"; // seu repositório
-const branch = "main"; // branch do GitHub Pages
+const branch = "main"; // branch
+const token = "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";
 
 for (let i=1; i<=10; i++) {
     document.write(`
@@ -78,27 +32,61 @@ for (let i=1; i<=10; i++) {
         <h3>Raw ${i}</h3>
         <textarea id="raw${i}"></textarea>
         <br>
-        <button onclick="gerarRaw(${i})">Gerar Raw</button>
+        <button onclick="enviarRaw(${i})">Enviar para GitHub</button>
         <button onclick="abrirRaw(${i})">Abrir Raw</button>
         <div id="rawcontainer${i}" class="raw-container"></div>
     </div>
     `);
 }
 
-function gerarRaw(n) {
-    const script = document.getElementById('raw'+n).value.trim();
-    if (!script) { alert("Escreva algum script primeiro!"); return; }
-    const container = document.getElementById('rawcontainer'+n);
-    container.textContent = `--- Copie e salve como raw/${n}.lua no GitHub ---\n\n` + script;
-    alert(`Raw ${n} pronto! Copie o conteúdo e crie o arquivo raw/${n}.lua no seu repositório GitHub.`);
-}
-
 function abrirRaw(n) {
     const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/raw/${n}.lua`;
     window.open(url, "_blank");
+}
+
+async function enviarRaw(n) {
+    const script = document.getElementById('raw'+n).value.trim();
+    if (!script) { alert("Escreva algum script primeiro!"); return; }
+
+    const path = `raw/${n}.lua`;
+    const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    
+    // Pega o SHA do arquivo se existir (para atualizar)
+    let sha = null;
+    try {
+        const res = await fetch(url, {
+            headers: { Authorization: `token ${token}` }
+        });
+        if (res.status === 200) {
+            const data = await res.json();
+            sha = data.sha;
+        }
+    } catch(err){ console.log(err); }
+
+    const payload = {
+        message: `Atualizando raw/${n}.lua`,
+        content: btoa(unescape(encodeURIComponent(script))),
+        branch: branch
+    };
+    if (sha) payload.sha = sha;
+
+    fetch(url, {
+        method: "PUT",
+        headers: {
+            "Authorization": `token ${token}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('rawcontainer'+n).textContent = "✅ Raw enviado para GitHub!";
+        console.log(data);
+    })
+    .catch(err => { console.log(err); alert("Erro ao enviar raw!"); });
 }
 </script>
 
 </div>
 </body>
-    </html>
+</html>
