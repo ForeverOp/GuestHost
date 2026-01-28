@@ -2,32 +2,32 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>GuestHost Raw Hub</title>
+<title>GuestHost Raw Creator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { background:#0f0f0f; color:#eaeaea; font-family: Arial, sans-serif; margin:0; padding:20px; }
+body { background:#0f0f0f; color:#eaeaea; font-family:Arial,sans-serif; padding:20px; }
 h1 { text-align:center; color:#ff4d4d; }
 .container { max-width:900px; margin:auto; }
-textarea { width:100%; height:150px; background:#1c1c1c; color:#00ffcc; border:1px solid #555; border-radius:8px; font-family: monospace; font-size:14px; padding:10px; resize:vertical; }
+textarea { width:100%; height:150px; background:#1c1c1c; color:#00ffcc; border:1px solid #555; border-radius:8px; font-family:monospace; font-size:14px; padding:10px; resize:vertical; }
 button { margin-top:10px; padding:10px 18px; font-size:14px; border-radius:6px; border:1.5px solid #fff; background:#ff4d4d; color:#fff; cursor:pointer; }
 button:hover { opacity:0.8; }
-.raw-container { margin-top:10px; background:#222; padding:10px; border-radius:8px; font-family: monospace; white-space: pre-wrap; }
+.raw-container { margin-top:10px; background:#222; padding:10px; border-radius:8px; font-family:monospace; word-break: break-all; }
 </style>
 </head>
 <body>
 
-<h1>GuestHost Raw Hub</h1>
+<h1>GuestHost Raw Creator</h1>
 <div class="container">
 
-<textarea id="scriptInput" placeholder="Escreva seu script Lua aqui..."></textarea>
+<textarea id="scriptInput" placeholder="Escreva seu script aqui..."></textarea>
 <br>
 <button onclick="criarRaw()">Criar Raw</button>
 <div id="rawcontainer" class="raw-container"></div>
 
 <script>
-const owner = "XLuckszX";   // seu usuário GitHub
-const repo = "xluckszxOxy";  // seu repositório
-const branch = "main";
+const owner = "XLuckszX";  // seu usuário GitHub
+const repo = "xluckszxOxy"; // seu repositório
+const branch = "main"; 
 const token = "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"; // seu token
 
 async function criarRaw() {
@@ -37,7 +37,9 @@ async function criarRaw() {
     // Pegar o próximo número disponível
     let nextNumber = 1;
     try {
-        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/raw`, { headers: { Authorization: `token ${token}` } });
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/raw`, {
+            headers: { Authorization: `token ${token}` }
+        });
         if(res.ok) {
             const data = await res.json();
             const numbers = data.map(file => parseInt(file.name.replace(".lua",""))).filter(n=>!isNaN(n));
@@ -45,47 +47,26 @@ async function criarRaw() {
         }
     } catch(err){ console.log(err); }
 
-    const rawPath = `raw/${nextNumber}.lua`;
-    const folderPath = `${nextNumber}`; // pasta para rota limpa
-    const htmlPath = `${folderPath}/index.html`;
+    const rawPath = `raw/${nextNumber}`;
 
-    // Cria o arquivo .lua
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${rawPath}`, {
+    // Cria o arquivo raw puro
+    const putRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${rawPath}`, {
         method: "PUT",
         headers: { "Authorization": `token ${token}`, "Content-Type":"application/json" },
-        body: JSON.stringify({ message: `Criando ${rawPath}`, content: btoa(unescape(encodeURIComponent(script))), branch })
+        body: JSON.stringify({
+            message: `Criando raw/${nextNumber}`,
+            content: btoa(unescape(encodeURIComponent(script))),
+            branch
+        })
     });
 
-    // Cria pasta + index.html para link limpo
-    const pageHTML = `
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<title>Raw ${nextNumber}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body { background:#0f0f0f; color:#eaeaea; font-family: Arial, sans-serif; margin:0; padding:20px; }
-pre { background:#111; padding:20px; border-radius:12px; white-space: pre-wrap; font-family: monospace; }
-</style>
-</head>
-<body>
-<h1>Raw ${nextNumber}</h1>
-<pre>${script.replace(/</g,"&lt;").replace(/>/g,"&gt;")}</pre>
-</body>
-</html>
-    `;
-
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${htmlPath}`, {
-        method: "PUT",
-        headers: { "Authorization": `token ${token}`, "Content-Type":"application/json" },
-        body: JSON.stringify({ message: `Criando ${htmlPath}`, content: btoa(unescape(encodeURIComponent(pageHTML))), branch })
-    });
-
-    // Mostra link limpo
-    const link = `https://${owner}.github.io/${repo}/${nextNumber}`;
-    document.getElementById('rawcontainer').innerHTML = `✅ Raw criado! <br> <a href="${link}" target="_blank">${link}</a>`;
-    document.getElementById('scriptInput').value = ""; // limpa textarea
+    if(putRes.ok) {
+        const link = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/raw/${nextNumber}`;
+        document.getElementById('rawcontainer').innerHTML = `✅ Raw criado!<br><a href="${link}" target="_blank">${link}</a>`;
+        document.getElementById('scriptInput').value = "";
+    } else {
+        document.getElementById('rawcontainer').innerHTML = "❌ Erro ao criar o raw. Verifique o token e repositório.";
+    }
 }
 </script>
 
