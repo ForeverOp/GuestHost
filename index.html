@@ -25,9 +25,9 @@ button:hover { opacity:0.8; }
 <div id="rawcontainer" class="raw-container"></div>
 
 <script>
-const owner = "XLuckszX";  // seu usuário GitHub
-const repo = "xluckszxOxy"; // seu repositório
-const branch = "main"; 
+const owner = "XLuckszX";   // seu usuário GitHub
+const repo = "xluckszxOxy";  // seu repositório
+const branch = "main";
 const token = "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"; // seu token
 
 async function criarRaw() {
@@ -46,7 +46,8 @@ async function criarRaw() {
     } catch(err){ console.log(err); }
 
     const rawPath = `raw/${nextNumber}.lua`;
-    const htmlPath = `${nextNumber}.html`;
+    const folderPath = `${nextNumber}`; // pasta para rota limpa
+    const htmlPath = `${folderPath}/index.html`;
 
     // Cria o arquivo .lua
     await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${rawPath}`, {
@@ -55,7 +56,7 @@ async function criarRaw() {
         body: JSON.stringify({ message: `Criando ${rawPath}`, content: btoa(unescape(encodeURIComponent(script))), branch })
     });
 
-    // Cria a página HTML que abre o script
+    // Cria pasta + index.html para link limpo
     const pageHTML = `
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -63,7 +64,10 @@ async function criarRaw() {
 <meta charset="UTF-8">
 <title>Raw ${nextNumber}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>body{background:#0f0f0f;color:#eaeaea;font-family:Arial,sans-serif;margin:0;padding:20px}pre{background:#111;padding:20px;border-radius:12px;white-space:pre-wrap;font-family:monospace}</style>
+<style>
+body { background:#0f0f0f; color:#eaeaea; font-family: Arial, sans-serif; margin:0; padding:20px; }
+pre { background:#111; padding:20px; border-radius:12px; white-space: pre-wrap; font-family: monospace; }
+</style>
 </head>
 <body>
 <h1>Raw ${nextNumber}</h1>
@@ -78,8 +82,8 @@ async function criarRaw() {
         body: JSON.stringify({ message: `Criando ${htmlPath}`, content: btoa(unescape(encodeURIComponent(pageHTML))), branch })
     });
 
-    // Mostra o link da nova página
-    const link = `https://${owner}.github.io/${repo}/${nextNumber}.html`;
+    // Mostra link limpo
+    const link = `https://${owner}.github.io/${repo}/${nextNumber}`;
     document.getElementById('rawcontainer').innerHTML = `✅ Raw criado! <br> <a href="${link}" target="_blank">${link}</a>`;
     document.getElementById('scriptInput').value = ""; // limpa textarea
 }
