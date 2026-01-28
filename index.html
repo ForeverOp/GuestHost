@@ -2,55 +2,75 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>GuestHost Interface</title>
+  <title>Raw Script Loader</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f5f5f5;
+      background: #1e1e1e;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
     }
     h1 {
-      color: #333;
+      color: #ff4b5c;
     }
-    input, button {
+    textarea {
+      width: 500px;
+      height: 200px;
+      margin: 10px 0;
+      background: #2e2e2e;
+      color: #fff;
+      border: 1px solid #555;
       padding: 10px;
-      margin: 5px 0;
+      font-family: monospace;
     }
     button {
+      padding: 10px 20px;
+      background: #ff4b5c;
+      border: none;
+      color: #fff;
+      font-weight: bold;
       cursor: pointer;
+      margin-bottom: 20px;
     }
-    #output {
-      margin-top: 20px;
-      padding: 10px;
-      background: #fff;
-      border: 1px solid #ccc;
+    a {
+      color: #1ed760;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>GuestHost Interface</h1>
-  
-  <input type="file" id="fileInput">
-  <button id="processBtn">Process File</button>
+  <h1>Raw Script Loader</h1>
 
-  <div id="output">
-    <p>No file processed yet.</p>
-  </div>
+  <textarea id="scriptInput" placeholder="Cole seu LocalScript aqui..."></textarea>
+  <button id="generateBtn">Gerar Raw</button>
+
+  <p id="message">Após gerar, clique no link para abrir o raw:</p>
+  <a id="rawLink" href="#" target="_blank">Abrir Raw</a>
 
   <script>
-    const fileInput = document.getElementById('fileInput');
-    const processBtn = document.getElementById('processBtn');
-    const output = document.getElementById('output');
+    const scriptInput = document.getElementById('scriptInput');
+    const generateBtn = document.getElementById('generateBtn');
+    const rawLink = document.getElementById('rawLink');
+    const message = document.getElementById('message');
 
-    processBtn.addEventListener('click', () => {
-      const file = fileInput.files[0];
-      if (!file) {
-        output.innerHTML = "<p>Please select a file first.</p>";
+    generateBtn.addEventListener('click', () => {
+      const code = scriptInput.value.trim();
+      if (!code) {
+        message.textContent = "Cole um script primeiro!";
         return;
       }
 
-      // Aqui só mostramos o nome do arquivo, sem backend
-      output.innerHTML = `<p>File ready to process: <strong>${file.name}</strong></p>`;
+      // Criamos uma URL Blob para simular um "raw"
+      const blob = new Blob([code], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+
+      rawLink.href = url;
+      rawLink.textContent = "Abrir Raw";
+      message.textContent = "Raw gerado! Clique no link abaixo:";
     });
   </script>
 </body>
