@@ -21,11 +21,12 @@ button:hover { opacity:0.8; }
 <div class="container">
 
 <script>
-const owner = "XLuckszX"; // seu usuário
+const owner = "XLuckszX"; // seu usuário GitHub
 const repo = "xluckszxOxy"; // seu repositório
 const branch = "main"; // branch
-const token = "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";
+const token = "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"; // seu token
 
+// Cria 10 boxes de scripts
 for (let i=1; i<=10; i++) {
     document.write(`
     <div class="box">
@@ -39,11 +40,13 @@ for (let i=1; i<=10; i++) {
     `);
 }
 
+// Abre o arquivo raw no GitHub
 function abrirRaw(n) {
     const url = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/raw/${n}.lua`;
     window.open(url, "_blank");
 }
 
+// Envia ou atualiza o arquivo raw via API GitHub
 async function enviarRaw(n) {
     const script = document.getElementById('raw'+n).value.trim();
     if (!script) { alert("Escreva algum script primeiro!"); return; }
@@ -51,12 +54,10 @@ async function enviarRaw(n) {
     const path = `raw/${n}.lua`;
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
     
-    // Pega o SHA do arquivo se existir (para atualizar)
+    // Pega o SHA do arquivo se ele existir
     let sha = null;
     try {
-        const res = await fetch(url, {
-            headers: { Authorization: `token ${token}` }
-        });
+        const res = await fetch(url, { headers: { Authorization: `token ${token}` } });
         if (res.status === 200) {
             const data = await res.json();
             sha = data.sha;
