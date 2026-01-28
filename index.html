@@ -10,6 +10,7 @@ button { margin-top:10px; padding:10px 15px; background:#ff4d4d; color:white; bo
 #rawlink { margin-top:15px; display:block; color:#0f0; word-break: break-all; }
 h1 { text-align:center; color:#ff4d4d; }
 .container { max-width:800px; margin:auto; }
+#status { margin-top:10px; color:#ff4d4d; font-weight:bold; }
 </style>
 </head>
 <body>
@@ -24,6 +25,9 @@ h1 { text-align:center; color:#ff4d4d; }
 </div>
 
 <script>
+// === URL do seu backend Node.js no Vercel ===
+const BACKEND_URL = "https://seuprojeto.vercel.app/api/create";
+
 async function criarRaw() {
     const script = document.getElementById('scriptInput').value.trim();
     if(!script) return alert("Escreva algum script!");
@@ -35,9 +39,6 @@ async function criarRaw() {
     linkEl.href = "";
 
     try {
-        // Substitua pelo link real do seu backend Node.js
-        const BACKEND_URL = "https://seuprojeto.vercel.app/api/create";
-
         const res = await fetch(BACKEND_URL, {
             method:"POST",
             headers:{ "Content-Type":"application/json" },
